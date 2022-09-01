@@ -40,7 +40,3 @@ class MatqueObject:
 
         # Set options to read-only
         OmegaConf.set_struct(self.options, True)
-
-
-if __name__ == "__main__":
-    pass
