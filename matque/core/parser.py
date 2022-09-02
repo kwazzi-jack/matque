@@ -4,6 +4,14 @@ def findVars(expr_string : str, vars : list[str]) -> dict:
     pass
 
 
+def findCoeffs(expr_string : str, coeffs : list[str]) -> dict:
+    pass
+
+
+def findConsts(expr_string : str, consts : list[str]) -> dict:
+    pass
+
+
 def findExpression(
     expr_string : str,
     vars : list[str] = ["x"],
