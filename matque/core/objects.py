@@ -12,7 +12,8 @@ class MatqueObject:
         
         # Default class options
         self.options = OmegaConf.create({
-            "name" : "MatqueObject"
+            "class" : "MatqueObject"
         })
-        
-        #OmegaConf.set_struct(self.options, True)
+
+        # Lock as struct
+        OmegaConf.set_struct(self.options, True)
