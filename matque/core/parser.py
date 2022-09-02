@@ -1,7 +1,10 @@
 import re
 
+def findVars(expr_string : str, vars : list[str]) -> dict:
+    pass
 
-def parseExpression(
+
+def findExpression(
     expr_string : str,
     vars : list[str] = ["x"],
     coeffs : list[str] = ["a"],
