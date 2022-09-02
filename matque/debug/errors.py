@@ -1,4 +1,4 @@
-class Error(Exception):
+class MatqueError(Exception):
     """
     Custom exception class for matque objects and methods.
 
@@ -101,7 +101,7 @@ class InvalidOptionError(MatqueError):
         super().__init__(err, msg, rem)
 
 
-class OptionValueError(Error):
+class OptionValueError(MatqueError):
     """
     Option Value Error class - error raised when invalid value for option of
     specific object is given.
@@ -129,7 +129,7 @@ class OptionValueError(Error):
 
         See also
         --------
-        class `Error`, class `OptionValidError`
+        class `MatqueError`, class `OptionValidError`
         """
 
         # Parse attributes
@@ -142,6 +142,52 @@ class OptionValueError(Error):
         msg = f"`{value}` for option `{option}` in "\
                 + f"`{obj}` is not valid."
         rem = f"Avaliable choices: {list(obj.options.keys())}"
+
+        # Initialize base class
+        super().__init__(err, msg, rem)
+
+
+class IllegalExpressionError(MatqueError):
+    """
+    Illegal Expressions class - when a custom expression is given,
+    but does not match the general form of the expression itself.
+
+    Attributes
+    ----------
+    obj : Expression
+        the object that raised the error.
+    expr : str
+        the custom expression that failed.
+    gen_expr : str
+        correct general expression for object.
+    """
+
+
+    def __init__(self, obj, expr, gen_expr):
+        """
+        Create instance of `IllegalExpressionError` with reference to expression
+        object and the custom expression that was invalid.
+
+        Parameters
+        ----------
+        obj
+        expr
+        gen_expr
+
+        See also
+        --------
+        class `MatqueError`, class `IllegalExpressionError`
+        """
+
+        # Parse attributes
+        self.obj = obj
+        self.expr = expr
+        self.gen_expr = gen_expr
+
+        # Error parameters for base
+        err = "Illegal Expression"
+        msg = f"`{expr}` is an illegal form of `{obj.name}`"
+        rem = f"{obj.name} has the general form: {gen_expr}"
 
         # Initialize base class
         super().__init__(err, msg, rem)
