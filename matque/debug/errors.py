@@ -1,3 +1,6 @@
+from matque.expressions import Expression
+
+
 class MatqueError(Exception):
     """
     Custom exception class for matque objects and methods.
@@ -163,7 +166,7 @@ class IllegalExpressionError(MatqueError):
     """
 
 
-    def __init__(self, obj, expr, gen_expr):
+    def __init__(self, obj : Expression, expr : str, gen_expr : str):
         """
         Create instance of `IllegalExpressionError` with reference to expression
         object and the custom expression that was invalid.
