@@ -1,7 +1,9 @@
 from calendar import c
 from matque.expressions import Expression
+from matque.core.objects import Coord
 from omegaconf import open_dict
 from sympy import sympify, Symbol
+from sympy.geometry.point import Point
 from abc import ABC, abstractclassmethod
 from typing import Union
 
@@ -35,18 +37,25 @@ class Polynomial(Expression, ABC):
 
     @property
     def y_intercept(self):
-        return self.expr.subs(self.x, 0)
+        return sympify("(0, {self.expr.subs(self.x, 0)}")
 
     @property
     def intercepts(self):
         return self.x_intercepts, self.y_intercept
 
     @property
+    @abstractclassmethod
     def turn_points(self):
         pass
 
     @property
+    @abstractclassmethod
     def parity(self):
+        pass
+
+    @property
+    @abstractclassmethod
+    def gradient(self):
         pass
 
     def __str__(self) -> str:
@@ -81,7 +90,19 @@ class Linear(Polynomial):
 
     @property
     def x_intercepts(self):
-        return -self.b / self.a
+        return Point(-self.b / self.a, 0)
+
+    @property
+    def turn_points(self):
+        return None
+
+    @property
+    def parity(self):
+        return "odd"
+
+    @property
+    def gradient(self):
+        return self.a
 
     def change(self, a="a", b="b", x="x"):
         """
@@ -104,6 +125,9 @@ class Linear(Polynomial):
         self.x = Symbol(x)
         self.expr = sympify(f"{a} * {x} + {b}")
 
+    def evaluate(self, *values):
+        return [self.expr.subs(self.x, value) for value in values]
+
 
 class Quadratic(Polynomial):
     """
@@ -122,8 +146,5 @@ class Cubic(Polynomial):
 
 
 if __name__ == "__main__":
-    line = Linear()
-    print(line)
-    print(line.y_intercept)
-    print(line.x_intercepts)
-    print(line.change("1", "2"))
+    line = Linear(a="m", b="c")
+    print(line.intercepts)
