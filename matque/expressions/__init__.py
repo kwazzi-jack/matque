@@ -3,7 +3,6 @@ from omegaconf import OmegaConf, open_dict
 
 
 class Expression(MatqueObject):
-
     def __init__(self, **options):
 
         # Initialize MatqueObject
@@ -11,15 +10,15 @@ class Expression(MatqueObject):
 
         # Default options
         defaults = {
-            "class" : "Expression",
-            "value" : None,
-            "mtype" : None, 
-        }    
+            "class": "Expression",
+            "value": None,
+            "mtype": None,
+        }
 
         # Update with new options, note lock
         with open_dict(self.options):
-            self.options.update(defaults)        
-            self.options.update(options)       
+            self.options.update(defaults)
+            self.options.update(options)
 
 
 if __name__ == "__main__":
