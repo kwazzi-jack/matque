@@ -3,7 +3,6 @@ from matque.expressions import Expression
 from matque.core.objects import Coord
 from omegaconf import open_dict
 from sympy import sympify, Symbol
-from sympy.geometry.point import Point
 from abc import ABC, abstractclassmethod
 from typing import Union
 
@@ -37,7 +36,7 @@ class Polynomial(Expression, ABC):
 
     @property
     def y_intercept(self):
-        return sympify("(0, {self.expr.subs(self.x, 0)}")
+        return Coord(0, self.expr.subs(self.x, 0))
 
     @property
     def intercepts(self):
@@ -90,7 +89,7 @@ class Linear(Polynomial):
 
     @property
     def x_intercepts(self):
-        return Point(-self.b / self.a, 0)
+        return Coord(-self.b / self.a, 0)
 
     @property
     def turn_points(self):
