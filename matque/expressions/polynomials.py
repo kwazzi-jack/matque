@@ -36,7 +36,7 @@ class Polynomial(Expression, ABC):
 
     @property
     def y_intercept(self):
-        return Coord(0, self.expr.subs(self.x, 0))
+        return Coord(0, self.expr.subs(self.x, 0), "Y")
 
     @property
     def intercepts(self):
@@ -89,7 +89,7 @@ class Linear(Polynomial):
 
     @property
     def x_intercepts(self):
-        return Coord(-self.b / self.a, 0)
+        return Coord(-self.b / self.a, 0, "X")
 
     @property
     def turn_points(self):

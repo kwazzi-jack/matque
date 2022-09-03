@@ -36,17 +36,17 @@ class Coord:
         if isinstance(y, Basic):
             self.y = y
         else:
-            self.y = sympify(x)
+            self.y = sympify(y)
 
         self.label = label
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         if len(self.label):
             return f"{self.label}({self.x}; {self.y})"
         else:
             return f"({self.x}; {self.y})"
 
-    def __repr__(self) -> str:
+    def __str__(self) -> str:
         return f"Coord(x={self.x}, y={self.y}, label={self.label})"
 
     def __setitem__(self, key: int, value: Union[int, float, str, Basic]):
