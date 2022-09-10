@@ -4,6 +4,7 @@ from matque.core.objects import Coord
 from omegaconf import open_dict
 from sympy import sympify, Symbol
 from abc import ABC, abstractclassmethod
+from collections.abc import Iterable
 from typing import Union
 
 
@@ -29,24 +30,7 @@ class Polynomial(Expression, ABC):
         # TODO: Fix with proper implementation
         self.expr = None
 
-    @property
-    @abstractclassmethod
-    def x_intercepts(self):
-        pass
-
-    @property
-    def y_intercept(self):
-        return Coord(0, self.expr.subs(self.x, 0), "Y")
-
-    @property
-    def intercepts(self):
-        return self.x_intercepts, self.y_intercept
-
-    @property
-    @abstractclassmethod
-    def turn_points(self):
-        pass
-
+    # Properties
     @property
     @abstractclassmethod
     def parity(self):
@@ -54,11 +38,51 @@ class Polynomial(Expression, ABC):
 
     @property
     @abstractclassmethod
-    def gradient(self):
+    def lead(self):
         pass
 
-    def __str__(self) -> str:
-        return str(self.expr)
+    @property
+    @abstractclassmethod
+    def const(self):
+        pass
+
+    @property
+    @abstractclassmethod
+    def terms(self):
+        pass
+
+    @property
+    @abstractclassmethod
+    def coeff(self):
+        pass
+    
+    # Methods
+    @abstractclassmethod
+    def change(self):
+        pass
+
+    @abstractclassmethod
+    def derive(self):
+        pass
+
+    @abstractclassmethod
+    def factorise(self):
+        pass
+
+    def evaluate(self, *values):
+        if len(values): 
+            return [self.expr.subs(self.x, value) 
+                        for value in values if not isinstance(value, Iterable)]
+        elif isinstance(values, Iterable):
+            return [self.expr.subs(self.x, value) for value in values]
+        else:
+            #TODO
+            raise ValueError("TODO")
+    
+    # Dunders
+    @abstractclassmethod
+    def __str__(self):
+        pass
 
 
 class Linear(Polynomial):
@@ -87,26 +111,35 @@ class Linear(Polynomial):
         # Create expressions
         self.change(a, b, x)
 
-    @property
-    def x_intercepts(self):
-        return Coord(-self.b / self.a, 0, "X")
-
-    @property
-    def turn_points(self):
-        return None
-
+    # Properties
     @property
     def parity(self):
         return "odd"
 
     @property
-    def gradient(self):
+    def lead(self):
+        return self.a * self.x
+
+    @property
+    def const(self):
+        return self.b
+
+    @property
+    def terms(self):
+        return [self.a * self.x, self.b]
+
+    @property
+    def coeff(self):
+        return [self.a, self.b]
+
+    # Methods
+    def derive(self):
         return self.a
 
     def change(self, a="a", b="b", x="x"):
         """
-        Change the terms of the linear polynomial
-        based on the given inputs. Also acts as
+        Change the terms of the linear polynomial, 
+        `a*x + b`, based on the given inputs. Also acts as
         a reset of terms.
 
         Parameters
@@ -119,14 +152,18 @@ class Linear(Polynomial):
             independent term of linear polynomial, by default "x"
         """
 
+        # Change terms
         self.a = Symbol(a)
         self.b = Symbol(b)
         self.x = Symbol(x)
+
+        # Change expression
         self.expr = sympify(f"{a} * {x} + {b}")
 
-    def evaluate(self, *values):
-        return [self.expr.subs(self.x, value) for value in values]
-
+    # Dunders
+    def __str__(self):
+        return f"{self.a}*{self.x} + {self.b}"
+   
 
 class Quadratic(Polynomial):
     """
@@ -146,4 +183,5 @@ class Cubic(Polynomial):
 
 if __name__ == "__main__":
     line = Linear(a="m", b="c")
-    print(line.intercepts)
+    [print(f"{i + 1}. {s}") for i, s in enumerate(dir(line.expr)) if s[0] != "_"]
+    breakpoint()
