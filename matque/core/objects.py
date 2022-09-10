@@ -40,13 +40,13 @@ class Coord:
 
         self.label = label
 
-    def __repr__(self) -> str:
+    def __str__(self) -> str:
         if len(self.label):
             return f"{self.label}({self.x}; {self.y})"
         else:
             return f"({self.x}; {self.y})"
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         return f"Coord(x={self.x}, y={self.y}, label={self.label})"
 
     def __setitem__(self, key: int, value: Union[int, float, str, Basic]):
@@ -77,5 +77,5 @@ class Coord:
 if __name__ == "__main__":
     A = Coord(0, sympify("cos(x)") + 1, "A")
     print(A)
-    A[2] = sympify("sin(x) - 1")
-    print(A)
+    A[1] = sympify("sin(x) - 1")
+    print(str(A))
