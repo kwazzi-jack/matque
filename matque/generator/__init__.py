@@ -1,17 +1,9 @@
 import numpy as np
 import random as rd
-from sympy import Integer, Float
+from sympy.core.numbers import Integer, Float
 from typing import Tuple, Union
-from enum import Enum
 import math
-
-
-# Macros
-class Macro(Enum):
-    ERROR = bin(0)
-    INTEGER = bin(1)
-    DECIMAL = bin(2)
-    MAX_INT = int(2**32 - 1)
+from matque.core import Macros
 
 
 def seed(n : int = None) -> None:
@@ -27,7 +19,7 @@ def seed(n : int = None) -> None:
 
     # Choose random time of 32-bit system
     if n == None:
-        n = rd.randrange(Macro.MAX_INT)
+        n = rd.randrange(Macros.MAX_INT)
     
     # Does not like 64-bit time
     rd.seed(n)
@@ -109,10 +101,10 @@ def integer_or_decimal(
         Union[Integer, Float]: 
             Sympy version of integer or float randomly generated.
     """
-    match rd.choices([Macro.INTEGER, Macro.DECIMAL], weights=p)[0]:
-        case Macro.INTEGER:
+    match rd.choices([Macros.INTEGER, Macros.DECIMAL], weights=p)[0]:
+        case Macros.INTEGER:
             return integer(math.floor(l), math.ceil(u))
-        case Macro.DECIMAL: 
+        case Macros.DECIMAL: 
             return decimal(l, u, r)
         case _:
             raise ValueError("Should not be here.")
