@@ -1,5 +1,6 @@
 from matque.core.objects import MatqueObject
-from omegaconf import OmegaConf, open_dict
+from matque.core import Macros
+from omegaconf import open_dict
 
 
 class Expression(MatqueObject):
