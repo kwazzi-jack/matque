@@ -1,6 +1,17 @@
 import numpy as np
-import random
+import random as rd
 from sympy import Integer, Float
+from typing import Tuple, Union
+from enum import Enum
+import math
+
+
+# Macros
+class Macro(Enum):
+    ERROR = bin(0)
+    INTEGER = bin(1)
+    DECIMAL = bin(2)
+    MAX_INT = int(2**32 - 1)
 
 
 def seed(n : int = None) -> None:
@@ -16,16 +27,19 @@ def seed(n : int = None) -> None:
 
     # Choose random time of 32-bit system
     if n == None:
-        n = random.randrange(int(2**32 - 1))
+        n = rd.randrange(Macro.MAX_INT)
     
     # Does not like 64-bit time
-    random.seed(n)
+    rd.seed(n)
     np.random.seed(n)
 
 
-def integer(l: int, u: int) -> Integer:
+def integer(
+    l: int, 
+    u: int
+    ) -> Integer:
     """Randomly generate an integer in the given 
-    range of `[l, u]` and return Integer
+    range of `[l, u]` and return as Integer
 
     Args:
         l (int): 
@@ -38,29 +52,75 @@ def integer(l: int, u: int) -> Integer:
             Sympy version of integer randomly generated.
     """
 
-    return Integer(random.randint(a=l, b=u))
+    return Integer(rd.randint(a=l, b=u))
 
 
-def decimal(l: int, u: int, r: int=2) -> Float:
+def decimal(
+    l: Union[int, float], 
+    u: Union[int, float], 
+    r: int=2
+    ) -> Float:
     """Randomly generate a float in the given
-    range of `[l, ]
+    range of `[l, u]` and return as Float.
 
     Args:
-        l (int): _description_
-        u (int): _description_
-        r (int, optional): _description_. Defaults to 2.
+        l (Union[int, float]): 
+            Inclusive lowerbound of float range.
+        u (Union[int, float]): 
+            Inclusive upperbound of float range.
+        r (int, optional): 
+            Number of decimal terms. Default is 2
+            decimal places.
 
     Returns:
-        Float: _description_
+        Float:
+            Sympy version of float randomly generated.
     """
-    num = random.uniform(l, u)
+    num = rd.uniform(l, u)
     return Float(num, r + len(str(int(num))))
+
+
+def integer_or_decimal(
+    l: Union[int, float], 
+    u: Union[int, float], 
+    r: int=2,
+    p: Tuple[float, float]=(0.5, 0.5),
+    ) -> Union[Integer, Float]:
+    """Randomly generate an integer OR float
+    in the given range of `[l, u]` and return
+    as resulting type.
+
+    Args:
+        l (Union[int, float]): 
+            Inclusive lowerbound of integer or float range. 
+            If integer, flooring of input is used.
+        u (Union[int, float]): 
+            Inclusive upperbound of integer or float range.
+            If integer, ceiling of input is used.
+        r (int, optional): 
+            Number of decimal terms. Default is 2
+            decimal places.
+        p (Tuple[float, float], optional):
+            The probabilities to use when choosing either
+            integer or decimal, respectively. Default is 
+            (0.5, 0.5), i.e., 50/50.
+
+    Returns:
+        Union[Integer, Float]: 
+            Sympy version of integer or float randomly generated.
+    """
+    match rd.choices([Macro.INTEGER, Macro.DECIMAL], weights=p)[0]:
+        case Macro.INTEGER:
+            return integer(math.floor(l), math.ceil(u))
+        case Macro.DECIMAL: 
+            return decimal(l, u, r)
+        case _:
+            raise ValueError("Should not be here.")
 
 
 if __name__ == "__main__":
     l, u = 0, 100
-    x1 = integer(l, u)
-    print(x1)
-
-    x2 = decimal(l, u)
-    print(x2)
+    r = 2
+    p = (0.5, 0.5)
+    x = integer_or_decimal(l, u, r, p)
+    print(x)
