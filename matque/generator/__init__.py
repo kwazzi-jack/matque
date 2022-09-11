@@ -1,6 +1,6 @@
 import numpy as np
 import random as rd
-from sympy.core.numbers import Integer, Float
+from sympy import Integer, Float
 from typing import Tuple, Union
 import math
 from matque.core import Macros
@@ -28,7 +28,8 @@ def seed(n : int = None) -> None:
 
 def integer(
     l: int, 
-    u: int
+    u: int,
+    nonzero: bool = False
     ) -> Integer:
     """Randomly generate an integer in the given 
     range of `[l, u]` and return as Integer
@@ -38,19 +39,26 @@ def integer(
             Inclusive lowerbound of integer range.
         u (int): 
             Inclusive upperbound of integer range.
+        nonzero (bool, optional):
+            State whether zero should be allowed
+            as a result or not.
 
     Returns:
         Integer: 
             Sympy version of integer randomly generated.
     """
-
+    num = rd.randint(a=l, b=u)
+    if nonzero and l <= 0 <= u:
+        while num == 0:
+            num = rd.randint(a=l, b=u)
     return Integer(rd.randint(a=l, b=u))
 
 
 def decimal(
     l: Union[int, float], 
     u: Union[int, float], 
-    r: int=2
+    r: int = 2,
+    nonzero: bool = False,
     ) -> Float:
     """Randomly generate a float in the given
     range of `[l, u]` and return as Float.
@@ -63,12 +71,18 @@ def decimal(
         r (int, optional): 
             Number of decimal terms. Default is 2
             decimal places.
+        nonzero (bool, optional):
+            State whether zero should be allowed
+            as a result or not.
 
     Returns:
         Float:
             Sympy version of float randomly generated.
     """
     num = rd.uniform(l, u)
+    if nonzero and l <= 0 <= u:
+        while num == 0:
+            num = rd.uniform(l, u)
     return Float(num, r + len(str(int(num))))
 
 
@@ -77,6 +91,7 @@ def integer_or_decimal(
     u: Union[int, float], 
     r: int=2,
     p: Tuple[float, float]=(0.5, 0.5),
+    nonzero: bool = False,
     ) -> Union[Integer, Float]:
     """Randomly generate an integer OR float
     in the given range of `[l, u]` and return
@@ -96,6 +111,9 @@ def integer_or_decimal(
             The probabilities to use when choosing either
             integer or decimal, respectively. Default is 
             (0.5, 0.5), i.e., 50/50.
+        nonzero (bool, optional):
+            State whether zero should be allowed
+            as a result or not.
 
     Returns:
         Union[Integer, Float]: 
@@ -103,9 +121,9 @@ def integer_or_decimal(
     """
     match rd.choices([Macros.INTEGER, Macros.DECIMAL], weights=p)[0]:
         case Macros.INTEGER:
-            return integer(math.floor(l), math.ceil(u))
+            return integer(math.floor(l), math.ceil(u), nonzero=nonzero)
         case Macros.DECIMAL: 
-            return decimal(l, u, r)
+            return decimal(l, u, r, nonzero=nonzero)
         case _:
             raise ValueError("Should not be here.")
 
