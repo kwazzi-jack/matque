@@ -29,3 +29,10 @@ def create_linear(
             case _:
                 raise ValueError("Invalid coefficient type.")
     poly = Linear(a, b, x)
+
+    return poly
+
+
+if __name__ == "__main__":
+    line = create_linear()
+    print(line)
