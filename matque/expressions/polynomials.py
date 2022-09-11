@@ -1,8 +1,9 @@
-from calendar import c
 from matque.expressions import Expression
 from matque.core.objects import Coord
 from omegaconf import open_dict
 from sympy import sympify, Symbol
+from sympy.core.numbers import Integer, Float
+import sympy as sp
 from abc import ABC, abstractclassmethod
 from collections.abc import Iterable
 from typing import Union
@@ -95,11 +96,6 @@ class Linear(Polynomial):
         # Initialize Polynomial, no options
         super().__init__()
 
-        # Set linear components
-        self.a = Symbol(a)
-        self.b = Symbol(b)
-        self.x = Symbol(x)
-
         # Default options
         defaults = {"class": "Linear"}
 
@@ -151,18 +147,20 @@ class Linear(Polynomial):
         x : str, optional
             independent term of linear polynomial, by default "x"
         """
-
         # Change terms
-        self.a = Symbol(a)
-        self.b = Symbol(b)
-        self.x = Symbol(x)
+        self.a = sympify(a)
+        self.b = sympify(b)
+        self.x = sympify(x)
 
         # Change expression
-        self.expr = sympify(f"{a} * {x} + {b}")
+        self.expr = self.a * self.x + self.b
+
+    def factorise(self):
+        pass
 
     # Dunders
     def __str__(self):
-        return f"{self.a}*{self.x} + {self.b}"
+        return str(self.expr)
    
 
 class Quadratic(Polynomial):
