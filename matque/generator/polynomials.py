@@ -15,24 +15,30 @@ def create_linear(
     coeff_type: str = "int"
     ) -> Linear:
 
-    if a == None and b == None:
-        match coeff_type.lower():
-            case "i" | "int" | "integer":
-                a = ge.integer(l, u)
+    match coeff_type.lower():
+        case "i" | "int" | "integer":
+            if a == None:
+                a = ge.integer(l, u, nonzero=True)
+            if b == None:
                 b = ge.integer(l, u)
-            case "f" | "float" | "decimal":
-                a = ge.decimal(l, u, r)
+        case "f" | "float" | "decimal":
+            if a == None:
+                a = ge.decimal(l, u, r, nonzero=True)
+            if b == None:
                 b = ge.decimal(l, u, r)
-            case "m" | "mix" | "mixed":
-                a = ge.integer_or_decimal(l, u, r, p)
+        case "m" | "mix" | "mixed":
+            if a == None:
+                a = ge.integer_or_decimal(l, u, r, p, nonzero=True)
+            if b == None:
                 b = ge.integer_or_decimal(l, u, r, p)
-            case _:
-                raise ValueError("Invalid coefficient type.")
+        case _:
+            raise ValueError("Invalid coefficient type.")
+                
     poly = Linear(a, b, x)
 
     return poly
 
 
 if __name__ == "__main__":
-    line = create_linear()
+    line = create_linear(coeff_type="i")
     print(line)
