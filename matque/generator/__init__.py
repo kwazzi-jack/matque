@@ -51,7 +51,7 @@ def integer(
     if nonzero and l <= 0 <= u:
         while num == 0:
             num = rd.randint(a=l, b=u)
-    return Integer(rd.randint(a=l, b=u))
+    return Integer(num)
 
 
 def decimal(
