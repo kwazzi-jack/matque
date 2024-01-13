@@ -145,3 +145,12 @@ cython_debug/
 
 #Vscode 
 .vscode/
+
+# Tex files
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.tex
+*.pdf
+*.gz
