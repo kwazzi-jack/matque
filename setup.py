@@ -1,6 +1,5 @@
 import setuptools
 
-
 with open("README.md", "r", encoding="utf-8") as file:
     long_description = file.read()
 
@@ -12,8 +11,8 @@ setuptools.setup(
     version="0.0.1",
     author="Brian Welman",
     author_email="brianallisterwelman@gmail.com",
-    description="Library to generate mathematics questions for "\
-            + "various topics with solutions.",
+    description="Library to generate mathematics questions for "
+    + "various topics with solutions.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/brianwelman2/matque.git",
@@ -25,8 +24,8 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: Unix",
     ],
-    python_requires='>=3.10',
-    test_suite='tests',
+    python_requires=">=3.10",
+    test_suite="tests",
     install_requires=requirements,
-    include_package_data=True
+    include_package_data=True,
 )
