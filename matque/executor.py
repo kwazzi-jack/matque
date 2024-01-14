@@ -10,8 +10,69 @@ class MatqueObject(ABC):
             self.name = symbol
         super().__init__()
 
+    def wrap(self):
+        return Expression(LPAREN, self, RPAREN)
+
     def __str__(self):
         return str(self.symbol)
+
+    def convert(obj):
+        if isinstance(obj, (int, float)):
+            return Number(obj)
+        elif isinstance(obj, str):
+            return Variable(obj)
+        else:
+            raise NotImplementedError(
+                f"Unknown term '{obj}'. Not supported or not implemented."
+            )
+
+    def __add__(self, other):
+        if not isinstance(other, MatqueObject):
+            other = MatqueObject.convert(other)
+
+        return Expression(self, ADD, other)
+
+    def __radd__(self, other):
+        if not isinstance(other, MatqueObject):
+            other = MatqueObject.convert(other)
+
+        return Expression(other, ADD, self)
+
+    def __sub__(self, other):
+        if not isinstance(other, MatqueObject):
+            other = MatqueObject.convert(other)
+
+        return Expression(self, SUB, other.wrap())
+
+    def __rsub__(self, other):
+        if not isinstance(other, MatqueObject):
+            other = MatqueObject.convert(other)
+
+        return Expression(other, SUB, self.wrap())
+
+    def __mul__(self, other):
+        if not isinstance(other, MatqueObject):
+            other = MatqueObject.convert(other)
+
+        return Expression(self.wrap(), MUL, other.wrap())
+
+    def __rmul__(self, other):
+        if not isinstance(other, MatqueObject):
+            other = MatqueObject.convert(other)
+
+        return Expression(other.wrap(), MUL, self.wrap())
+
+    def __truediv__(self, other):
+        if not isinstance(other, MatqueObject):
+            other = MatqueObject.convert(other)
+
+        return Expression(self.wrap(), DIV, other.wrap())
+
+    def __rtruediv__(self, other):
+        if not isinstance(other, MatqueObject):
+            other = MatqueObject.convert(other)
+
+        return Expression(other.wrap(), DIV, self.wrap())
 
 
 class Variable(MatqueObject):
@@ -25,13 +86,15 @@ class Operator(MatqueObject):
 
 
 class Function(Operator):
-    def __init__(self, func, arg, name=None) -> None:
-        self.arg = arg
+    def __init__(self, func, name=None) -> None:
         self.func = func
         super().__init__(func, name)
 
-    def __str__(self):
-        return f"{self.func}({self.arg})"
+    def __call__(self, arg):
+        if not isinstance(arg, MatqueObject):
+            arg = MatqueObject.convert(arg)
+
+        return Expression(self, arg.wrap())
 
 
 class Number(MatqueObject):
@@ -45,15 +108,22 @@ class Number(MatqueObject):
 
 class Expression(MatqueObject):
     def __init__(self, *expression, name=None) -> None:
-        self.expression = expression
-        super().__init__(expression, name)
+        new_expression = []
+        for expr in expression:
+            if isinstance(expr, Expression):
+                new_expression += expr.expression
+            else:
+                new_expression.append(expr)
+
+        self.expression = new_expression
+        super().__init__(new_expression, name)
 
     def __str__(self):
         return " ".join(map(str, self.expression))
 
 
 class Statement:
-    def __init__(self, left, right, rel_op="=") -> None:
+    def __init__(self, left, right, rel_op) -> None:
         self.left = left
         self.right = right
         self.rel_op = rel_op
@@ -65,13 +135,30 @@ class Statement:
         return f"Statement('{self.left}', '{self.rel_op}', '{self.right}')"
 
 
+class Equality(Statement):
+    def __init__(self, left, right) -> None:
+        super().__init__(left, right, "=")
+
+
+class Inequality(Statement):
+    def __init__(self, left, sign, right) -> None:
+        super().__init__(left, right, sign)
+
+
+ADD = Operator("+")
+SUB = Operator("-")
+MUL = Operator("", name="MUL")
+DIV = Operator("÷")
+LPAREN = Operator("(")
+RPAREN = Operator(")")
+
 if __name__ == "__main__":
     x = Variable("x")
     one = Number("1")
-    print(x)
-    f = Function("f", x)
-    plus = Operator("+")
+    f = Function("f")
+    g = Function("g")
     y = Variable("y")
-    eq1 = Statement(y, Expression(f, plus, one), rel_op=">")
-    print(eq1)
+    eq1 = Equality(g(y), (f("x") + 1.0) / "y")
+
+    print(eq1.right)
     print(eq1.to_latex())
