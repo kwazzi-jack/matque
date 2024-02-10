@@ -20,8 +20,8 @@ setuptools.setup(
     classifiers=[
         "Natural Language :: English",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.10",
-        "License :: OSI Approved :: MIT License",
+        "Programming Language :: Python :: 3.11",
+        "License :: OSI Approved :: GPL License",
         "Operating System :: Unix",
     ],
     python_requires=">=3.10",
