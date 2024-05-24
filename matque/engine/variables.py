@@ -1,6 +1,4 @@
-from matque.engine.core import *
-from matque.engine.numerics import *
-from matque.engine.operators import *
+from matque.engine.core import Node
 
 
 class Variable(Node):
@@ -8,4 +6,7 @@ class Variable(Node):
         self.name = name
 
     def to_latex(self):
+        return self.name
+
+    def __str__(self) -> str:
         return self.name

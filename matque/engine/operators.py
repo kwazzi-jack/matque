@@ -1,12 +1,24 @@
-from matque.engine.core import *
-from matque.engine.numerics import *
-from matque.engine.variables import *
+from matque.engine.core import Node
+from matque.engine.numerics import Number
+from matque.engine.variables import Variable
 
 
 class BinaryOperator(Node):
+    _to_string_operator = "!NaN!"
+    _to_latex_operator = "!NaN!"
+
     def __init__(self, left, right):
         self.left = left
         self.right = right
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}[{self.left}, {self.right}]"
+
+    def __str__(self):
+        return f"{self.left}{self.__class__._to_string_operator}{self.right}"
+
+    def to_latex(self):
+        return f"{self.left.to_latex()} {self.__class__._to_latex_operator} {self.right.to_latex()}"
 
 
 class UnaryOperator(Node):
@@ -15,35 +27,36 @@ class UnaryOperator(Node):
 
 
 class Addition(BinaryOperator):
-    def to_latex(self):
-        return f"{self.left.to_latex()} + {self.right.to_latex()}"
+    _to_string_operator = "+"
+    _to_latex_operator = "+"
+
+
+class Subtraction(BinaryOperator):
+    _to_string_operator = "-"
+    _to_latex_operator = "-"
 
 
 class Multiplication(BinaryOperator):
-    def __init__(self, left, right, explicit=False):
-        super().__init__(left, right)
-        self.explicit = explicit
+    _to_string_operator = "*"
+    _to_latex_operator = "\\times"
+
+
+class Division(BinaryOperator):
+    _to_string_operator = "/"
+    _to_latex_operator = "*"
+
+
+class Function(Node):
+    def __init__(self, name, *args) -> None:
+        self.name = name
+        self.args = args
 
     def to_latex(self):
-        left_latex = self.left.to_latex()
-        right_latex = self.right.to_latex()
+        args_latex = ", ".join(arg.to_latex() for arg in self.args)
+        return f"{self.name}({args_latex})"
 
-        # Determine if the multiplication should be explicit based on the operands
-        if self.explicit:
-            return f"{left_latex} \\times {right_latex}"
-        else:
-            # Handle special cases for implicit multiplication
-            if isinstance(self.left, Number) and isinstance(self.right, Variable):
-                return f"{left_latex}{right_latex}"
-            elif isinstance(self.left, Variable) and isinstance(self.right, Number):
-                # Typically, variables are not prefixed by numbers without an operator in standard notation
-                return f"{right_latex}{left_latex}"
-            elif isinstance(self.left, Number) and isinstance(self.right, Number):
-                # Numbers are typically explicitly multiplied
-                return f"{left_latex} \\times {right_latex}"
-            else:
-                # Default to implicit multiplication for other cases
-                return f"{left_latex} {right_latex}"
+
+# Define operators
 
 
 if __name__ == "__main__":
@@ -55,15 +68,15 @@ if __name__ == "__main__":
 
     # Implicit multiplication
     expression1 = Multiplication(two, x)
-    print(expression1.to_latex())  # Expected: 2x
+    print(expression1, expression1.to_latex())  # Expected: 2x
 
     expression1 = Multiplication(x, two)
-    print(expression1.to_latex())  # Expected: 2x
+    print(expression1, expression1.to_latex())  # Expected: 2x
 
     # Explicit multiplication
-    expression2 = Multiplication(x, y, explicit=True)
-    print(expression2.to_latex())  # Expected: x \times y
+    expression2 = Multiplication(x, y)
+    print(expression2, expression2.to_latex())  # Expected: x \times y
 
     # Multiplication involving numbers only, treated as explicit
     expression3 = Multiplication(two, three)
-    print(expression3.to_latex())  # Expected: 2 \times 3
+    print(expression3, expression3.to_latex())  # Expected: 2 \times 3
