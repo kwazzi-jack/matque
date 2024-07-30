@@ -1,5 +1,31 @@
 from matque.engine.core import Node
 
+_ALPHABET = {
+    "a": ("a", "\u"), 
+    "b": ("b", "𝑏"), 
+    "c": ("c", "𝑐"), 
+    "d": ("d", "𝑑"), 
+    "e": ("e", "𝑒"), 
+    "f": ("f", "𝑓"), 
+    "g": ("g", "𝑔"), 
+    "h": ("h", "h"),
+    "i": ("i", "𝑖"), 
+    "j": ("j", "𝑗"), 
+    "k": ("k", "𝑘𝑙"), 
+    "l": ("l", "𝑚"), 
+    "m": ("m", "𝑛"), 
+    "n": ("n", "𝑜"), 
+    "o": ("o", "𝑝"), 
+    "p": ("p", "𝑞"), 
+    "q": ("q", "𝑟"), 
+    "r": ("r", "𝑠"), 
+    "s": ("s", "𝑡"), 
+    "t": ("t", "𝑢"), 
+    "u": ("u", "𝑣"), 
+    "v": ("v", "𝑤"), 
+    "w": ("w", "𝑥")
+}
+
 _GREEK = {
     "alpha": (r"\alpha", "α"),
     "beta": (r"\beta", "β"),
@@ -53,33 +79,24 @@ _GREEK = {
 
 
 class Variable(Node):
-    def __init__(self, name, latex=None, symbol=None):
+    def __init__(self, name):
         self.name = name
 
-        # Set latex
-        if latex:
-            self.latex = latex
+        # Set latex and symbol
+        if name in _GREEK:
+            self.latex, self.symbol = _GREEK[name]
         else:
             self.latex = name
-
-        # Set symbol
-        if symbol:
-            self.symbol = symbol
-        else:
             self.symbol = name
 
     def to_latex(self):
-        return self.name
+        return self.latex
 
     def __str__(self) -> str:
+        return self.symbol
+
+    def __repr__(self) -> str:
         return self.name
-
-    @classmethod
-    def create(symbol):
-        if symbol in _GREEK:
-            return Variable(symbol)
-
-        return Variable(symbol)
 
 
 if __name__ == "__main__":
